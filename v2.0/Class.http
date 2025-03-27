@@ -1,0 +1,265 @@
+### variables from /http-client.env.json
+
+###
+# @name ClientCredentialsGrant
+POST {{authUrl}}/connect/token HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials
+&client_id={{client_id}}
+&client_secret={{client_secret}}
+&scope={{scope}}
+
+> {% client.global.set("auth_token", response.body.access_token); %}
+
+###
+# Return all classes with minimal details
+# with 100 items per request starting at 0
+POST {{baseUrl}}/api/v2.0/Class/Search HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+	"From": 0,
+	"Size": 100,
+	"Languagecode": "nl-NL"
+}
+
+###
+# Return all classes including Group field for a specific Release within some Groups
+# with 20 items per request starting at 0
+POST {{baseUrl}}/api/v2.0/Class/Search HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+	"From": 0,
+	"Size": 20,
+	"Languagecode": "nl-NL",
+	"Filters": [
+		{
+			"Code": "Release",
+			"Values": ["ETIM-9.0"]
+		},
+		{
+			"Code": "Group",
+			"Values": ["EG000017", "EG000020"]
+		}
+	],
+	"Include": {
+		"Fields": ["Group"],
+		"Descriptions": false,
+		"Translations": false
+	}
+}
+
+###
+# Return all regular classes (without modelling classes) within the DYNAMIC Release with minimal details
+# with 100 items per request starting at 0
+POST {{baseUrl}}/api/v2.0/Class/Search HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+	"From": 0,
+	"Size": 100,
+	"Languagecode": "EN",
+	"Modelling": false,
+	"Filters": [
+		{
+			"Code": "Release",
+			"Values": ["DYNAMIC"]
+		}
+	]
+}
+
+###
+# Return all regular ETIM-7.0 classes with maximum details
+# - Descriptions in nl-NL language
+# - Translations for all languages the client is entitled to
+# - Group, Releases, Features
+# with 10 items per request starting at 0
+POST {{baseUrl}}/api/v2.0/Class/Search HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+	"From": 0,
+	"Size": 10,
+	"Languagecode": "nl-NL",
+	"Modelling": false,
+	"Include": {
+		"Descriptions": true,
+		"Translations": true,
+		"Fields": ["Group", "Releases", "Features"]
+	},
+	"Filters": [
+		{ 
+			"Code": "Release",
+			"Values": ["ETIM-7.0"]
+		}
+	]
+}
+
+
+###
+# Return all classes filtered on specific filters
+# - Descriptions in nl-NL language
+# with 20 items per request starting at 0
+POST {{baseUrl}}/api/v2.0/Class/Search HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+	"From": 0,
+	"Size": 20,
+	"Languagecode": "nl-NL",
+	"Include": {
+		"Descriptions": true
+	},
+	"Filters": [
+		{ 
+			"Code": "Release",
+			"Values": ["ETIM-7.0"]
+		},
+		{
+			"Code": "Group",
+			"Values": ["EG000001", "EG000002"]
+		},
+		{
+			"Code": "Class",
+			"Values": ["EC000034", "EC000247"]
+		},
+		{
+			"Code": "Feature",
+			"Values": ["EF000472", "EF001678"]
+		},
+		{
+			"Code": "Value",
+			"Values": ["EV010186", "EV010168"]
+		}
+	]
+}
+
+###
+# Return all classes where description meets a specific searchstring
+# - Descriptions in EN language
+# with 20 items per request starting at 0
+POST {{baseUrl}}/api/v2.0/Class/Search HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+	"From": 0,
+	"Size": 20,
+	"Languagecode": "nl-NL",
+	"SearchString": "mc00",
+	"Include": {
+		"Descriptions": true
+	}
+}
+
+###
+# Return a specific class with minimal details
+POST {{baseUrl}}/api/v2.0/Class/Details HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+	"code": "EC002883",
+	"version": 2,
+	"languagecode": "EN"
+}
+
+###
+# Return a specific class with maximum details
+# - Group, Releases, Features
+# - Descriptions in nl-NL language
+# - Translations for all languages the client is entitled to
+POST {{baseUrl}}/api/v2.0/Class/Details HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+	"code": "EC002883",
+	"version": 3,
+	"languagecode": "nb-NO",
+	"Include": { 
+		"Descriptions": true,
+		"Fields": ["Group", "Releases", "Features"]
+	}
+}
+
+###
+# Return a group of classes 
+# - 
+POST {{baseUrl}}/api/v2.0/Class/DetailsMany HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+	"classes":[ 
+		{"code": "EC003025", "version": 1 },
+		{"code": "EC003025", "version": 2 }
+		],
+	"languagecode": "nl-NL",
+	"Include": { 
+		"Descriptions": true,
+	}
+}
+
+###
+# Return all class versions for a given class code
+#
+POST {{baseUrl}}/api/v2.0/Class/DetailsManyByCode  HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+	"code": "EC002883",
+	"languagecode": "nl-NL",
+	"Include": {
+		"Descriptions": true,
+		"Translations": true
+	}
+}
+
+
+###
+# Return a specific class with maximum details and changes with previous version
+# - Group, Releases, Features
+# - Descriptions in nl-NL language
+# - Translations for all languages the client is entitled to
+POST {{baseUrl}}/api/v2.0/Class/DetailsDiff HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+	"code": "EC000034",
+	"version": 7,
+	"languagecode": "nl-NL",
+	"Include": { 
+		"Descriptions": true,
+		"Translations": true,
+		"Fields": ["Group", "Releases", "Features"]
+	}
+}
+
+###
+# Return a specific class based on Release
+POST {{baseUrl}}/api/v2.0/Class/DetailsForRelease HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+	"code": "EC000034",
+	"release": "DYNAMIC",
+	"languagecode": "EN",
+	"Include": { 
+		"Descriptions": true,
+		"Translations": true,
+		"Fields": ["Group", "Releases", "Features"]
+	}
+}
+
+###

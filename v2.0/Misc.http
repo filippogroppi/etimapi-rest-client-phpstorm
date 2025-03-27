@@ -1,0 +1,25 @@
+### variables from /http-client.env.json
+
+###
+# @name ClientCredentialsGrant
+POST {{authUrl}}/connect/token HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials
+&client_id={{client_id}}
+&client_secret={{client_secret}}
+&scope={{scope}}
+
+> {% client.global.set("auth_token", response.body.access_token); %}
+
+###
+# Return all languages the client is allowed to
+GET {{baseUrl}}/api/v2.0/Misc/LanguagesAllowed HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+###
+# Return all releases
+GET {{baseUrl}}/api/v2.0/Misc/Releases HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
