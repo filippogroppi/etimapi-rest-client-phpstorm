@@ -40,15 +40,13 @@ Some variables are used from the settings file.
 
 ```json
 {
-"rest-client.environmentVariables": {
-	"production": {
-		"authUrl": "https://etimauth.etim-international.com",
-		"baseUrl": "https://etimapi.etim-international.com",
-		"client_id": "",
-		"client_secret": "",
-		"scope": "EtimApi"
-	}
-}
+  "production": {
+    "authUrl": "https://etimauth.etim-international.com",
+    "baseUrl": "https://etimapi.etim-international.com",
+    "client_id": "",
+    "client_secret": "",
+    "scope": "EtimApi"
+  }
 }
 ```
 * Fill in the client_id/client_secret you received from ETIM International
